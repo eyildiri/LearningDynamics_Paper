@@ -29,7 +29,7 @@ class AspirationBMAgent:
         Sample an action using effective probability.
         """
         p_eff = self.get_effective_p()
-        action = C if rng.random() < p_eff else D   # pas tres bien sur si c'est juste !!!!!!!!!!!!!!!!
+        action = C if rng.random() < p_eff else D
         self.last_action = action
         return action
 

@@ -5,7 +5,7 @@ C = 1  # cooperate
 D = 0  # defect
 
 
-def fix01(x: float) -> float:
+def fix01(x: float):
     """fix a value to [0, 1]."""
     if x < 0.0:
         return 0.0
@@ -14,7 +14,7 @@ def fix01(x: float) -> float:
     return x
 
 
-def stimulus(r: float, A: float, beta: float) -> float:
+def stimulus(r: float, A: float, beta: float):
     """
     Eq. 2 from the paper:  s = tanh(beta * (r - A))
     """
@@ -23,7 +23,7 @@ def stimulus(r: float, A: float, beta: float) -> float:
     return math.tanh(beta * (r - A))
 
 
-def apply_misimplementation(p: float, epsilon: float) -> float:
+def apply_misimplementation(p: float, epsilon: float):
     """
     Return the actual probability of cooperating after action-flip noise.
     Misimplementation (noise) from the paper: p_eps = p*(1-eps) + (1-p)*eps
@@ -35,7 +35,7 @@ def apply_misimplementation(p: float, epsilon: float) -> float:
     return fix01(p_eps)
 
 
-def bm_update(p: float, action_prev: int, s_prev: float) -> float:
+def bm_update(p: float, action_prev: int, s_prev: float):
     """
     Eq. (1) from the paper (Bush-Mosteller update) : 
       If action_prev == C and s_prev >= 0: p <- p + (1-p)*s
@@ -72,7 +72,7 @@ def bm_update(p: float, action_prev: int, s_prev: float) -> float:
     return fix01(p_new)
 
 
-def bm_step(p: float, action_prev: int, reward_prev: float, A: float, beta: float) -> float:
+def bm_step(p: float, action_prev: int, reward_prev: float, A: float, beta: float):
     # computes stimulus from (reward_prev, A, beta) then applies BM update
     s_prev = stimulus(reward_prev, A=A, beta=beta)
     return bm_update(p=p, action_prev=action_prev, s_prev=s_prev)
