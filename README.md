@@ -6,6 +6,7 @@ dites moi ce que vous en pensez.
 Comme le modèle je le trouvais pas trop complexe et l'environnement PDG aussi j'ai tout fait avec numpy et j'ai pas utiliser PettingZoo, je sais pas si ca va poser problème pour les résulats ou avec le PGG.
 
 Pour comprendre ce que j'ai fait, 
+
     dans BMmodel.py : 
     - c'est juste l'application des 2 formules du paper 
     - j'ai fait un fonctions fix01 pour bien rester entre [0,1] quand on calcul les proba
