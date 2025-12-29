@@ -13,9 +13,10 @@ class AspirationBMAgent:
         self.A = float(A)
         self.beta = float(beta)
         self.epsilon = float(epsilon)
+        self.p_init = float(p_init)
 
         self.p = fix01(float(p_init)) 
-        self.last_action = None        # we initialize it here to None because it's needed for the BM update (Eq. 1)
+        self.last_action = None # we initialize it here to None because it's needed for the BM update (Eq. 1)
 
     def get_effective_p(self):
         """
@@ -47,6 +48,10 @@ class AspirationBMAgent:
             A=self.A,
             beta=self.beta,
         )
+
+    def reset(self):
+        self.p = fix01(float(self.p_init))
+        self.last_action = None
 
 
 def make_agents(n_agents, A, beta, epsilon, p_init=0.5):

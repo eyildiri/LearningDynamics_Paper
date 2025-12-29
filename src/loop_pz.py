@@ -1,0 +1,94 @@
+import numpy as np
+
+def run_episode(
+    env, # PettingZoo environment
+    agents, # List of agent
+    ep_lenght_max = 25, # Maximum episode length
+    seed = 0, # Random seed
+    render = False # Render into terminal
+    ):
+
+    rng = np.random.default_rng(seed)
+
+    n_agents = len(agents)
+    if n_agents != env.n_agents: # Debug
+        raise ValueError(f"Number of agents ({n_agents}) must match env ({env.n_agents})")
+
+    actions_hist = np.zeros((ep_lenght_max, n_agents), dtype=int) # Actions history
+    rewards_hist = np.zeros((ep_lenght_max, n_agents), dtype=float) # Rewards history
+    p_hist = np.zeros((ep_lenght_max, n_agents), dtype=float) # Rho history
+
+    # Must reset env and agent at start of episode
+    obs, infos = env.reset(seed=seed)
+
+    for agent in agents:
+        agent.reset()
+
+    for t in range(ep_lenght_max):
+        # --- Agents choose actions (dict for PettingZoo) ---
+        actions_dict = {}
+        actions_vec = np.zeros(n_agents, dtype=int)
+
+        for i, name in enumerate(env.possible_agents):
+            a = agents[i].select_action(rng)
+            actions_vec[i] = a
+            actions_dict[name] = int(a)
+
+        # --- Env step ---
+        obs, rewards_dict, terminations, truncations, infos = env.step(actions_dict)
+
+        # convert rewards dict into vector 
+        rewards_vec = np.zeros(n_agents, dtype=float)
+        for i, name in enumerate(env.possible_agents):
+            rewards_vec[i] = float(rewards_dict[name])
+
+        # --- Update agents ---
+        for i in range(n_agents):
+            agents[i].update(rewards_vec[i])
+            p_hist[t, i] = agents[i].p
+
+        # store history
+        actions_hist[t] = actions_vec
+        rewards_hist[t] = rewards_vec
+
+        # --- Optional render ---
+        if render and hasattr(env, "render"):
+            env.render()
+
+        # Time limit reached or terminated
+        if any(truncations.values()) or any(terminations.values()):
+            break
+
+    return actions_hist, rewards_hist, p_hist
+
+
+def run_simulation(
+    env, # PettingZoo environment
+    agents, # agent list
+    n_episodes = 1000, # number of independent runs
+    ep_lenght_max = 25, # maximum episode length
+    seed = 0, # random seed
+    render = False # render first episode only into terminal
+):
+    n_agents = len(agents)
+    actions_all = np.zeros((n_episodes, ep_lenght_max, n_agents), dtype=int)
+    rewards_all = np.zeros((n_episodes, ep_lenght_max, n_agents), dtype=float)
+    p_all = np.zeros((n_episodes, ep_lenght_max, n_agents), dtype=float)
+
+    for ep in range(n_episodes):        
+        # change seed each episode for reproducibility
+        ep_seed = seed + ep
+
+        actions_hist, rewards_hist, p_hist = run_episode(
+            env = env,
+            agents = agents,
+            ep_lenght_max = ep_lenght_max,
+            seed = ep_seed,
+            render = render if ep == 0 else False # render only first episode by default
+        )
+
+        actions_all[ep] = actions_hist
+        rewards_all[ep] = rewards_hist
+        p_all[ep] = p_hist
+
+    return actions_all, rewards_all, p_all
