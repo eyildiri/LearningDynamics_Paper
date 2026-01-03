@@ -1,5 +1,5 @@
 import numpy as np
-from BMmodel import C, D, apply_misimplementation, bm_step, fix01
+from BMmodel import *
 
 
 class AspirationBMAgent:
@@ -57,3 +57,102 @@ class AspirationBMAgent:
 def make_agents(n_agents, A, beta, epsilon, p_init=0.5):
     """Create a list of identical AspirationBMAgents."""
     return [AspirationBMAgent(A=A, beta=beta, epsilon=epsilon, p_init=p_init) for _ in range(n_agents)]
+
+
+# Agent class for PGG game (Bush-Mosteller)
+class AspirationBMPGGAgent:
+
+    def __init__(
+        self,
+        A : float, # niveau d'aspiration (translate or else osef)
+        beta : float, # stimulus sensibility
+        coop_threshold : float, # threshold to consider cooperation
+        p_init : float = 0.5, # initial tendency to contribute
+        sigma : float = 0.2, # stimulus
+        max_redraws : int = 10000, # redraw max (to not loop forever but keep long enough)
+    ):
+    
+        self.A = A
+        self.beta = beta
+        self.coop_threshold = coop_threshold
+        self.p_init = p_init
+        self.sigma = sigma
+        self.max_redraws = max_redraws
+
+        self.p = fix01(p_init)
+        self.last_action = None
+
+
+    # Draw from N(mean, sigma^2) and reject samples outside [0,1] until success
+    def truncated_gaussian_01(
+        self, 
+        rng : np.random.Generator, # random number generator
+        mean : float # mean
+    ) -> float:
+
+        mean = float(mean)
+        
+        for _ in range(self.max_redraws):
+            x = float(rng.normal(loc=mean, scale=self.sigma))
+            if 0.0 <= x <= 1.0:
+                return x
+        
+        print(f"[WARNING] max draw reach ({self.max_redraws})")
+        x = float(rng.normal(loc=mean, scale=self.sigma))
+        return 0.0 if x < 0.0 else (1.0 if x > 1.0 else x) # unsure [0,1]
+
+
+    # Sample a continuous contribution in [0,1] as np.ndarray shape (1,)
+    def select_action(
+        self, 
+        rng : np.random.Generator # random number generator
+    ) -> np.ndarray:
+    
+        a = self.truncated_gaussian_01(rng, mean=self.p)
+        self.last_action = a
+        return np.array([a], dtype=np.float32)
+
+
+    # Update p after receiving reward
+    def update(self, reward : float):
+        
+        if self.last_action is None:
+            raise RuntimeError("update() called before select_action().")
+
+        s_prev = stimulus(r=float(reward), A=self.A, beta=self.beta)
+        action_prev = C if self.last_action >= self.coop_threshold else D
+        self.p = bm_update(p=self.p, action_prev=action_prev, s_prev=s_prev)
+
+
+    # It reset all value
+    def reset(self):
+        self.p = fix01(self.p_init)
+        self.last_action = None
+
+
+
+# Create a list of AspirationBMPGGAgent
+def make_pgg_agents(
+    n_agents : int, # number of agent
+    A : float, # niveau d'aspiration (translate or else osef)
+    beta : float, # stimulus sensibility
+    coop_threshold : float, # threshold to consider cooperation
+    p_init : float = 0.5, # initial tendency to contribute
+    p_init_mode : str = "fixed", # "fixed" or random start
+    seed = None, # random seed
+    sigma : float = 0.2 # Ecart-type du bruit d’action (translate or else osef)
+):
+
+    rng = np.random.default_rng(seed)
+    agents = []
+    
+    for _ in range(n_agents):
+        
+        if p_init_mode == "fixed":
+            p0 = float(p_init)
+        else: # random start
+            p0 = float(rng.random())
+        
+        agents.append(AspirationBMPGGAgent(A=A, beta=beta, coop_threshold=coop_threshold, p_init=p0, sigma=sigma))
+
+    return agents

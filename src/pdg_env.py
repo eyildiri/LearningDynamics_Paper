@@ -45,22 +45,22 @@ class PDGGridParallelEnv(ParallelEnv):
         # Internal episode state
         self.ep_counter = 0
         self.rng = np.random.default_rng()
-        self.last_actions : Optional[np.ndarray] = None
+        self.last_actions : Optional[np.ndarray] = None # 0 / 1
 
         # --- Spaces ---
-        # Observation (agents are external and ignore obs)
+        # Observation (agents are external and ignore obs => agents.py)
         self._obs_space = spaces.Box(low=0.0, high=0.0, shape=(1,), dtype=np.float32)
         # Action (0 = D, 1 = C)
         self._act_space = spaces.Discrete(2)
 
 
     # Useless but required by PettingZoo
-    def observation_space(self, agent: str):
+    def observation_space(self, agent : str):
         return self._obs_space
 
 
     # Useless but required by PettingZoo
-    def action_space(self, agent: str):
+    def action_space(self, agent : str):
         return self._act_space
 
     
@@ -226,7 +226,11 @@ class PDGGridParallelEnv(ParallelEnv):
 
 
     # Compute fraction of cooperating neighbors for all agents (for infos)
-    def fraction_coop_neighbors(self, actions: np.ndarray) -> np.ndarray:
+    def fraction_coop_neighbors(
+        self, 
+        actions : np.ndarray # action of all agent
+    ) -> np.ndarray:
+    
         fC = np.zeros(self.n_agents, dtype=float)
         
         for i in range(self.n_agents):

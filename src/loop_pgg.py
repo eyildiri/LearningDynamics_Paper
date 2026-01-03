@@ -1,12 +1,13 @@
 import numpy as np
 
+
 def run_episode(
     env, # PettingZoo environment
     agents, # List of agent
     ep_lenght_max = 25, # Maximum episode length
     seed = 0, # Random seed
     render = False # Render into terminal
-    ):
+):
 
     rng = np.random.default_rng(seed)
 
@@ -14,7 +15,7 @@ def run_episode(
     if n_agents != env.n_agents: # Debug
         raise ValueError(f"Number of agents ({n_agents}) must match env ({env.n_agents})")
 
-    actions_hist = np.zeros((ep_lenght_max, n_agents), dtype=int) # Actions history
+    actions_hist = np.zeros((ep_lenght_max, n_agents), dtype=float) # Actions history
     rewards_hist = np.zeros((ep_lenght_max, n_agents), dtype=float) # Rewards history
     p_hist = np.zeros((ep_lenght_max, n_agents), dtype=float) # Rho history
 
@@ -25,13 +26,17 @@ def run_episode(
         agent.reset()
 
     for t in range(ep_lenght_max):
+        # --- Agents choose actions (dict for PettingZoo) ---
         actions_dict = {}
-        actions_vec = np.zeros(n_agents, dtype=int)
+        actions_vec = np.zeros(n_agents, dtype=float)
 
         for i, name in enumerate(env.possible_agents):
-            a = agents[i].select_action(rng)
-            actions_vec[i] = a
-            actions_dict[name] = int(a)
+            a_arr = agents[i].select_action(rng) # np.ndarray shape (1,)
+            a_val = float(np.asarray(a_arr, dtype=float).reshape(-1)[0])
+            a_val = float(np.clip(a_val, 0.0, 1.0))
+
+            actions_vec[i] = a_val
+            actions_dict[name] = np.array([a_val], dtype=np.float32)
 
         # --- Env step ---
         obs, rewards_dict, terminations, truncations, infos = env.step(actions_dict)
@@ -39,12 +44,12 @@ def run_episode(
         # convert rewards dict into vector 
         rewards_vec = np.zeros(n_agents, dtype=float)
         for i, name in enumerate(env.possible_agents):
-            rewards_vec[i] = float(rewards_dict[name])
+            rewards_vec[i] = float(rewards_dict.get(name, 0.0))
 
         # --- Update agents ---
         for i in range(n_agents):
             agents[i].update(rewards_vec[i])
-            p_hist[t, i] = agents[i].p
+            p_hist[t, i] = float(getattr(agents[i], "p", np.nan))
 
         # store history
         actions_hist[t] = actions_vec
@@ -69,23 +74,24 @@ def run_simulation(
     seed = 0, # random seed
     render = False # render first episode only into terminal
 ):
+    
     n_agents = len(agents)
-    actions_all = np.zeros((n_episodes, ep_lenght_max, n_agents), dtype=int)
+    actions_all = np.zeros((n_episodes, ep_lenght_max, n_agents), dtype=float)
     rewards_all = np.zeros((n_episodes, ep_lenght_max, n_agents), dtype=float)
     p_all = np.zeros((n_episodes, ep_lenght_max, n_agents), dtype=float)
 
-    for ep in range(n_episodes):        
+    for ep in range(n_episodes):
         # change seed each episode for reproducibility
         ep_seed = seed + ep
-
+        
         actions_hist, rewards_hist, p_hist = run_episode(
-            env = env,
-            agents = agents,
-            ep_lenght_max = ep_lenght_max,
-            seed = ep_seed,
-            render = render if ep == 0 else False # render only first episode by default
+            env=env,
+            agents=agents,
+            ep_lenght_max=ep_lenght_max,
+            seed=ep_seed,
+            render = render if ep == 0 else False, # render only first episode by default
         )
-
+        
         actions_all[ep] = actions_hist
         rewards_all[ep] = rewards_hist
         p_all[ep] = p_hist
