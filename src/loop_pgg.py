@@ -30,10 +30,14 @@ def run_episode(
         actions_dict = {}
         actions_vec = np.zeros(n_agents, dtype=float)
 
+
+
         for i, name in enumerate(env.possible_agents):
             a_arr = agents[i].select_action(rng) # np.ndarray shape (1,)
             a_val = float(np.asarray(a_arr, dtype=float).reshape(-1)[0])
             a_val = float(np.clip(a_val, 0.0, 1.0))
+
+
 
             actions_vec[i] = a_val
             actions_dict[name] = np.array([a_val], dtype=np.float32)
@@ -95,5 +99,4 @@ def run_simulation(
         actions_all[ep] = actions_hist
         rewards_all[ep] = rewards_hist
         p_all[ep] = p_hist
-
     return actions_all, rewards_all, p_all

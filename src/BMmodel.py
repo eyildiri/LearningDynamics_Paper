@@ -72,7 +72,7 @@ def bm_update(p: float, action_prev: int, s_prev: float):
     return fix01(p_new)
 
 
-def bm_step(p: float, action_prev: int, reward_prev: float, A: float, beta: float):
+def bm_step(p: float, action_prev: int, reward_prev: float, A: float, beta: float, treshold: float = 0.5):
     # computes stimulus from (reward_prev, A, beta) then applies BM update
     s_prev = stimulus(reward_prev, A=A, beta=beta)
-    return bm_update(p=p, action_prev=action_prev, s_prev=s_prev)
+    return bm_update(p=p, action_prev=action_prev, s_prev=s_prev, treshold=treshold)
