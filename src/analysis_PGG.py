@@ -72,10 +72,9 @@ def cc_mcc(actions_all, t_start=1, t_end=25, tresh=0.5):
            
             # fC_{t-1} pour tous les agents
 
-            total = now_a.sum()
-            n = len(now_a)
-            average_other = (total - now_a) / (n - 1)
-
+            total_prev = prev_a.sum()
+            n = len(prev_a)
+            average_other = (total_prev - prev_a) / (n - 1)
        
 
             #for played_bet in now_a:
@@ -140,9 +139,10 @@ def alpha_fit_polyfit(actions_all, condition=None, t_start=1, t_end=25, tresh=0.
             prev_a = actions_all[tr, t-1, :]  # (n_agents,)
             now_a  = actions_all[tr, t,   :]  # (n_agents,)
 
-            total = now_a.sum()
-            n = len(now_a)
-            average_other = (total - now_a) / (n - 1)
+            total_prev = prev_a.sum()
+            n = len(prev_a)
+            average_other = (total_prev - prev_a) / (n - 1)
+
 
 
             #for played_bet in now_a:

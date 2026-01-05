@@ -17,6 +17,7 @@ def run_episode(
     actions_hist = np.zeros((ep_lenght_max, n_agents), dtype=int) # Actions history
     rewards_hist = np.zeros((ep_lenght_max, n_agents), dtype=float) # Rewards history
     p_hist = np.zeros((ep_lenght_max, n_agents), dtype=float) # Rho history
+    A_hist = np.zeros((ep_lenght_max, n_agents), dtype=float) # Aspiration history
 
     # Must reset env and agent at start of episode
     obs, infos = env.reset(seed=seed)
@@ -45,6 +46,7 @@ def run_episode(
         for i in range(n_agents):
             agents[i].update(rewards_vec[i])
             p_hist[t, i] = agents[i].p
+            A_hist[t, i] = agents[i].A
 
         # store history
         actions_hist[t] = actions_vec
@@ -58,7 +60,7 @@ def run_episode(
         if any(truncations.values()) or any(terminations.values()):
             break
 
-    return actions_hist, rewards_hist, p_hist
+    return actions_hist, rewards_hist, p_hist, A_hist
 
 
 def run_simulation(
@@ -70,15 +72,16 @@ def run_simulation(
     render = False # render first episode only into terminal
 ):
     n_agents = len(agents)
-    actions_all = np.zeros((n_episodes, ep_lenght_max, n_agents), dtype=int)
-    rewards_all = np.zeros((n_episodes, ep_lenght_max, n_agents), dtype=float)
-    p_all = np.zeros((n_episodes, ep_lenght_max, n_agents), dtype=float)
+    actions_all = np.zeros((n_episodes, ep_lenght_max, n_agents), dtype=int) # actions
+    rewards_all = np.zeros((n_episodes, ep_lenght_max, n_agents), dtype=float) # reward
+    p_all = np.zeros((n_episodes, ep_lenght_max, n_agents), dtype=float) # rho
+    A_all = np.zeros((n_episodes, ep_lenght_max, n_agents), dtype=float) # Aspiration
 
     for ep in range(n_episodes):        
         # change seed each episode for reproducibility
         ep_seed = seed + ep
 
-        actions_hist, rewards_hist, p_hist = run_episode(
+        actions_hist, rewards_hist, p_hist, A_hist = run_episode(
             env = env,
             agents = agents,
             ep_lenght_max = ep_lenght_max,
@@ -89,5 +92,6 @@ def run_simulation(
         actions_all[ep] = actions_hist
         rewards_all[ep] = rewards_hist
         p_all[ep] = p_hist
+        A_all[ep] = A_hist
 
-    return actions_all, rewards_all, p_all
+    return actions_all, rewards_all, p_all, A_all

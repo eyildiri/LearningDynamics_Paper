@@ -60,9 +60,9 @@ class AspirationBMAgent:
         self.A = self.A_init
 
 
-def make_agents(n_agents, A, beta, epsilon, p_init=0.5):
+def make_agents(n_agents, A, beta, epsilon, p_init=0.5, eta : float = 0.0):
     """Create a list of identical AspirationBMAgents."""
-    return [AspirationBMAgent(A=A, beta=beta, epsilon=epsilon, p_init=p_init) for _ in range(n_agents)]
+    return [AspirationBMAgent(A=A, beta=beta, epsilon=epsilon, p_init=p_init, eta = eta) for _ in range(n_agents)]
 
 
 
@@ -154,7 +154,8 @@ def make_pgg_agents(
     p_init : float = 0.5, # initial tendency to contribute
     p_init_mode : str = "fixed", # "fixed" or random start
     seed = None, # random seed
-    sigma : float = 0.2 # Ecart-type du bruit d’action (translate or else osef)
+    sigma : float = 0.2, # Ecart-type du bruit d’action (translate or else osef)
+    eta : float = 0.0 # for dynamic aspiration
 ):
 
     rng = np.random.default_rng(seed)
@@ -167,6 +168,6 @@ def make_pgg_agents(
         else: # random start
             p0 = float(rng.random())
         
-        agents.append(AspirationBMPGGAgent(A=A, beta=beta, coop_threshold=coop_threshold, p_init=p0, sigma=sigma))
+        agents.append(AspirationBMPGGAgent(A = A, beta = beta, coop_threshold = coop_threshold, p_init = p0, sigma = sigma, eta = eta))
 
     return agents
