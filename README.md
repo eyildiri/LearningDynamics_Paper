@@ -1,4 +1,4 @@
-# Learning Dynamics in Social Dilemmas: Reinforcement Learning Explains Conditional Cooperation
+# Reinforcement Learning Explains Conditional Cooperation and Its Moody Cousin
 
 This repository contains an implementation and replication of the research paper **"Reinforcement Learning Explains Conditional Cooperation and Its Moody Cousin"** by Takahiro Ezaki, Yutaka Horita, Masanori Takezawa, and Naoki Masuda. The project explores how reinforcement learning, specifically the Bush-Mosteller model, can explain cooperative behaviors in social dilemmas such as the Public Goods Game (PGG) and the Prisoner's Dilemma Game (PDG).
 
