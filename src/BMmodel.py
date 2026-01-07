@@ -6,7 +6,7 @@ D = 0  # defect
 
 
 def fix01(x: float):
-    """fix a value to [0, 1]."""
+    """fix a value to [0, 1] to prevent calculation errors."""
     if x < 0.0:
         return 0.0
     if x > 1.0:

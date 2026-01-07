@@ -66,21 +66,21 @@ def cc_mcc(actions_all, neighbors, t_start=1, t_end=25):
 
     for tr in range(n_trials):
         for t in range(t_start, t_end):
-            prev_a = actions_all[tr, t-1, :]  # (n_agents,)
-            now_a  = actions_all[tr, t,   :]  # (n_agents,)
+            prev_a = actions_all[tr, t-1, :]  
+            now_a  = actions_all[tr, t,   :]  
 
             # fC_{t-1} pour tous les agents
-            fC = prev_a[neigh].mean(axis=1)   # (n_agents,)
+            fC = prev_a[neigh].mean(axis=1)  
 
             # For each bin f in {0,0.25,...,1}
             for k, f in enumerate(f_vals):
                 mask_f = (fC == f)
 
                 # Global
-                # count: combien d'agents avaient fC==f
-                # sum: combien ont coopéré à t parmi eux (now_a vaut 0/1)
+                # count: how many agents had fC==f
+                # sum: how many cooperated at t among them (now_a is 0/1)
                 cnt_global[k] += mask_f.sum()
-                sum_global[k] += now_a[mask_f].sum() # combien ont coopéré dans ce groupe
+                sum_global[k] += now_a[mask_f].sum() # how many cooperated in this group
 
                 # Conditioned prev=C
                 mask_C = mask_f & (prev_a == 1)
@@ -131,11 +131,10 @@ def alpha_fit_polyfit(actions_all, neighbors, condition=None, t_start=1, t_end=2
 
     for tr in range(n_trials):
         for t in range(t_start, t_end):
-            prev_a = actions_all[tr, t-1, :]  # (n_agents,)
-            now_a  = actions_all[tr, t,   :]  # (n_agents,)
-
+            prev_a = actions_all[tr, t-1, :]
+            now_a  = actions_all[tr, t,   :]
             # x = fC(t-1)
-            fC = prev_a[neigh].mean(axis=1)   # (n_agents,)
+            fC = prev_a[neigh].mean(axis=1)   
 
             if condition == "prevC":
                 mask = (prev_a == 1)

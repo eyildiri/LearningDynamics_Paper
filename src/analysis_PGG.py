@@ -67,10 +67,9 @@ def cc_mcc(actions_all, t_start=1, t_end=25, tresh=0.5):
 
     for tr in range(n_trials):
         for t in range(t_start, t_end):
-            prev_a = actions_all[tr, t-1, :]  # (n_agents,)
-            now_a  = actions_all[tr, t,   :]  # (n_agents,)
-           
-            # fC_{t-1} pour tous les agents
+            prev_a = actions_all[tr, t-1, :]  
+            now_a  = actions_all[tr, t,   :]  
+        
 
             total_prev = prev_a.sum()
             n = len(prev_a)
@@ -136,8 +135,8 @@ def alpha_fit_polyfit(actions_all, condition=None, t_start=1, t_end=25, tresh=0.
 
             
 
-            prev_a = actions_all[tr, t-1, :]  # (n_agents,)
-            now_a  = actions_all[tr, t,   :]  # (n_agents,)
+            prev_a = actions_all[tr, t-1, :]  
+            now_a  = actions_all[tr, t,   :]  
 
             total_prev = prev_a.sum()
             n = len(prev_a)

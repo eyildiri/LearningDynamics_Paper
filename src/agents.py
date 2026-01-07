@@ -18,7 +18,7 @@ class AspirationBMAgent:
         self.eta = eta
 
         self.p = fix01(float(p_init)) 
-        self.last_action = None # we initialize it here to None because it's needed for the BM update (Eq. 1)
+        self.last_action = None # we initialize it here to None : needed for the BM update (Eq. 1)
 
     def get_effective_p(self):
         """
@@ -71,7 +71,7 @@ class AspirationBMPGGAgent:
 
     def __init__(
         self,
-        A : float, # niveau d'aspiration (translate or else osef)
+        A : float, #Aspiration (translate or else osef)
         beta : float, # stimulus sensibility
         coop_threshold : float, # threshold to consider cooperation
         p_init : float = 0.5, # initial tendency to contribute
@@ -148,13 +148,13 @@ class AspirationBMPGGAgent:
 # Create a list of AspirationBMPGGAgent
 def make_pgg_agents(
     n_agents : int, # number of agent
-    A : float, # niveau d'aspiration (translate or else osef)
+    A : float, # Aspiration 
     beta : float, # stimulus sensibility
     coop_threshold : float, # threshold to consider cooperation
     p_init : float = 0.5, # initial tendency to contribute
     p_init_mode : str = "fixed", # "fixed" or random start
     seed = None, # random seed
-    sigma : float = 0.2, # Ecart-type du bruit d’action (translate or else osef)
+    sigma : float = 0.2, # standard deviation of action noise
     eta : float = 0.0 # for dynamic aspiration
 ):
 
