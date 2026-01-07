@@ -2,6 +2,20 @@
 
 This repository contains an implementation and replication of the research paper **"Reinforcement Learning Explains Conditional Cooperation and Its Moody Cousin"** by Takahiro Ezaki, Yutaka Horita, Masanori Takezawa, and Naoki Masuda. The project explores how reinforcement learning, specifically the Bush-Mosteller model, can explain cooperative behaviors in social dilemmas such as the Public Goods Game (PGG) and the Prisoner's Dilemma Game (PDG).
 
+## Dependencies
+
+The project requires Python 3.8+ and the following packages:
+- `numpy`
+- `matplotlib`
+- `scipy`
+- `pettingzoo`
+- `gymnasium`
+
+You can install them using pip:
+```bash
+pip install numpy matplotlib scipy pettingzoo gymnasium
+```
+
 ## Project Structure
 
 ```
