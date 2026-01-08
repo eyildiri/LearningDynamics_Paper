@@ -22,7 +22,8 @@ pip install numpy matplotlib scipy pettingzoo gymnasium
 .
 ├── README.md                 # This file: Overview and project description
 ├── docs/
-│   └── Paper.pdf             # The original research paper (PDF format)
+│   ├── CC_MCC-FRANCOIS-MANDEL-YILDIRIM-Group_28-report.pdf    # Project Report (PDF format)
+│   └── Paper.pdf                                              # The original research paper (PDF format)
 ├── src/
 │   ├── agents.py             # Agent classes: AspirationBMAgent (for PDG) and AspirationBMPGGAgent (for PGG)
 │   ├── BMmodel.py            # Core Bush-Mosteller model functions
