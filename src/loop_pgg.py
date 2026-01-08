@@ -38,6 +38,8 @@ def run_episode(
             a_val = float(np.asarray(a_arr, dtype=float).reshape(-1)[0])
             a_val = float(np.clip(a_val, 0.0, 1.0))
 
+            if i in env.fr :
+                a_val = 0.0
 
 
             actions_vec[i] = a_val

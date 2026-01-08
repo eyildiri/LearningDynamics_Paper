@@ -37,7 +37,7 @@ def fC_prev(actions_prev, neigh_arr):
 
 # Fig 3: CC / MCC 
 
-def cc_mcc(actions_all, t_start=1, t_end=25, tresh=0.5):
+def cc_mcc(actions_all, t_start=1, t_end=25, tresh=0.4, fr_list = list()):
     """
     Compute CC/MCC curves aggregated across all trials/time/agents.
     Returns:
@@ -70,29 +70,29 @@ def cc_mcc(actions_all, t_start=1, t_end=25, tresh=0.5):
             prev_a = actions_all[tr, t-1, :]  
             now_a  = actions_all[tr, t,   :]  
         
-
-            total_prev = prev_a.sum()
             n = len(prev_a)
-            average_other = (total_prev - prev_a) / (n - 1)
+
        
 
             #for played_bet in now_a:
             for i in range(len(now_a)):
+                if i not in fr_list:
+                    played_bet = now_a[i]
 
-                played_bet = now_a[i]
+                    average_other = (now_a.sum() - now_a[i]) / (n - 1)
 
-                idx = np.argmin(np.abs(f_vals - average_other[i]))
-              
-                cnt_global[idx] += 1
-                sum_global[idx] += played_bet
+                    idx = np.argmin(np.abs(f_vals - average_other))
                 
-                if prev_a[i] >= tresh:
-                    cnt_prevC[idx] += 1
-                    sum_prevC[idx] += played_bet
-                
-                else:
-                    cnt_prevD[idx] += 1
-                    sum_prevD[idx] += played_bet
+                    cnt_global[idx] += 1
+                    sum_global[idx] += played_bet
+                    
+                    if prev_a[i] >= tresh:
+                        cnt_prevC[idx] += 1
+                        sum_prevC[idx] += played_bet
+                    
+                    else:
+                        cnt_prevD[idx] += 1
+                        sum_prevD[idx] += played_bet
 
 
     def safe_div(num, den):

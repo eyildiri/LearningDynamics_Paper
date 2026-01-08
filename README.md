@@ -35,6 +35,8 @@ pip install numpy matplotlib scipy pettingzoo gymnasium
 └── results/
     ├── results_dynamic_aspiration_PGG.ipynb   # Jupyter notebook: Simulations and plots for dynamic aspiration in PGG 
     ├── results_dynamic_aspiration.ipynb       # Jupyter notebook: Simulations and plots for dynamic aspiration in PDG
+    ├── results_pdg_fr.ipynb                   # Jupyter notebook: Simulations of PDG with a fraction of Free Riders
+    ├── results_pgg_fr.ipynb                   # Jupyter notebook: Simulations of PGG with a fraction of Free Riders
     ├── results_PDG.ipynb                      # Jupyter notebook: PDG-specific results
     └── results_PGG.ipynb                      # Jupyter notebook: PGG-specific results
 ```

@@ -55,6 +55,9 @@ class AspirationBMAgent:
             self.A = (1 - self.eta) * self.A + self.eta * reward
 
     def reset(self):
+        """
+        Reset all the agents with initial probabilty of actions. 
+        """
         self.p = fix01(float(self.p_init))
         self.last_action = None
         self.A = self.A_init
@@ -99,6 +102,10 @@ class AspirationBMPGGAgent:
         rng : np.random.Generator, # random number generator
         mean : float # mean
     ) -> float:
+        
+        """
+        Apply a Gaussian centered in mean with standard deviation sigma and truncate it to [0,1].
+        """
 
         mean = float(mean)
         
@@ -117,7 +124,9 @@ class AspirationBMPGGAgent:
         self, 
         rng : np.random.Generator # random number generator
     ) -> np.ndarray:
-    
+        """
+        Select the next action base on the truncated Gaussian around p.
+        """
         a = self.truncated_gaussian_01(rng, mean=self.p)
         self.last_action = a
         return np.array([a], dtype=np.float32)
@@ -125,7 +134,9 @@ class AspirationBMPGGAgent:
 
     # Update p after receiving reward
     def update(self, reward : float):
-        
+        """
+        Update p using the BM update rule with stimulus based on the reward.
+        """
         if self.last_action is None:
             raise RuntimeError("update called before select_action")
 
@@ -139,6 +150,9 @@ class AspirationBMPGGAgent:
 
     # It reset all value
     def reset(self):
+        """
+        Reset the agents base on PGG game.
+        """
         self.p = fix01(self.p_init)
         self.last_action = None
         self.A = self.A_init

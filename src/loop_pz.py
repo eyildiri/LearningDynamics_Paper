@@ -31,6 +31,8 @@ def run_episode(
 
         for i, name in enumerate(env.possible_agents):
             a = agents[i].select_action(rng)
+            if i in env.fr : # if Free Rider
+                a = 0
             actions_vec[i] = a
             actions_dict[name] = int(a)
 

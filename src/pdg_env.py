@@ -26,6 +26,7 @@ class PDGGridParallelEnv(ParallelEnv):
         size : int = 10, # grid size
         ep_leng : int = 25, # episode length
         payoffs : PDGPayoffs = PDGPayoffs(), # PDG payoffs
+        frac_fr : float = 0 #Fraction fo Free Riders
     ):
         
         # --- Environment parameters ---
@@ -38,6 +39,14 @@ class PDGGridParallelEnv(ParallelEnv):
         # PettingZoo agent names
         self.possible_agents = [f"player_{i}" for i in range(self.n_agents)]
         self.agents : List[str] = []
+
+        #Free Riders agents index
+        nbr_fr = frac_fr*self.n_agents
+
+        if nbr_fr > 0:
+            self.fr = list(np.random.choice(self.n_agents, int(nbr_fr), replace=False))  
+        else:
+            self.fr = list()
 
         # Precompute neighbors for each agent
         self.neighbors : List[List[int]] = self._build_neighbors()

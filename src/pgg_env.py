@@ -15,7 +15,8 @@ class PGGParallelEnv(ParallelEnv):
         n_agents : int = 4, # number of player
         ep_leng : int = 25, # episode length
         multiplication : float = 1.6, # public goods multiplier
-        coop_threshold : float = 0.5 # X threshold to binarize contributions
+        coop_threshold : float = 0.5, # X threshold to binarize contributions
+        n_fr : int = 0 #number of Free Riders
     ):
 
         # --- Environment parameters ---
@@ -28,6 +29,12 @@ class PGGParallelEnv(ParallelEnv):
         # PettingZoo agent names
         self.possible_agents = [f"player_{i}" for i in range(self.n_agents)]
         self.agents: List[str] = []
+
+        #index of free riders 
+        if n_fr > 0:
+            self.fr = list(np.random.choice(self.n_agents, n_fr, replace=False))  
+        else:
+            self.fr = list()
 
         # Internal episode state
         self.ep_counter = 0
